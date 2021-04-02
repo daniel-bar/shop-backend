@@ -1,0 +1,36 @@
+{
+  "name": "shop-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node ./dist/server.js",
+    "dev": "env-cmd -f ./env/backend.env nodemon ./src/server.ts",
+    "build": "tsc -p ."
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^5.0.1",
+    "express": "^4.17.1",
+    "fs-extra": "^9.1.0",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.12.1",
+    "nodemailer": "^6.5.0",
+    "typescript": "^4.2.3",
+    "winston": "^3.3.3"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^3.0.0",
+    "@types/debug": "^4.1.5",
+    "@types/express": "^4.17.11",
+    "@types/fs-extra": "^9.0.8",
+    "@types/jsonwebtoken": "^8.5.1",
+    "@types/mongoose": "^5.10.3",
+    "@types/nodemailer": "^6.4.1",
+    "env-cmd": "^10.1.0",
+    "nodemon": "^2.0.7",
+    "ts-node": "^9.1.1"
+  }
+}
