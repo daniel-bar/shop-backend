@@ -78,7 +78,7 @@ because could not find user with id ${data.id}`
     req.userId = userId;
 
     next();
-};
+}
 
 const adminAuth = async (req: IAdminAuthMiddlewareRequest, res: IAdminAuthMiddlewareResponse, next: express.NextFunction) => {
     ServerGlobal.getInstance().logger.info('[admin auth middleware]: Start processing request');
@@ -128,7 +128,7 @@ const adminAuth = async (req: IAdminAuthMiddlewareRequest, res: IAdminAuthMiddle
         });
         return;
     }
-};
+}
 
 export {
     auth,

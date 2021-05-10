@@ -3,4 +3,4 @@ type FeedbackResponse = Readonly<{
     message: string;
 }>;
 
-export { FeedbackResponse };
+export { FeedbackResponse }

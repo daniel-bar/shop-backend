@@ -4,6 +4,8 @@ import { FeedbackResponse } from '../../shared/response';
 
 import { ProductCategory } from '../../../server-global';
 
+import { ProductGender } from '../../product';
+
 type IAddProductResponse = express.Response<FeedbackResponse>;
 
 type IGetProductsResponse = express.Response<
@@ -11,9 +13,11 @@ type IGetProductsResponse = express.Response<
         data: ReadonlyArray<Readonly<{
             id: string;
             category: ProductCategory;
+            gender: ProductGender;
             title: string;
             description: string;
             price: number;
+            image: string;
         }>>;
     }>>
 >;
@@ -22,9 +26,11 @@ type IGetProductResponse = express.Response<
     FeedbackResponse & Readonly<Partial<{
         data: Readonly<{
             category: string;
+            gender: string;
             title: string;
             description: string;
             price: number;
+            image: string;
         }>;
     }>>
 >;
@@ -35,9 +41,12 @@ type IGetCategoriesResponse = express.Response<
     }>>
 >;
 
+type IDeleteProductResponse = express.Response<FeedbackResponse>;
+
 export {
     IAddProductResponse,
     IGetProductsResponse,
     IGetProductResponse,
     IGetCategoriesResponse,
+    IDeleteProductResponse,
 }

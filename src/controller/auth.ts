@@ -94,7 +94,11 @@ const register = async (req: IRegisterRequest, res: IRegisterResponse) => {
         res.status(201).send({
             success: true,
             message: 'Successfully created a new user',
-            data: { token: newToken },
+            data: {
+                fullname: req.body.fullname,
+                email: req.body.email,
+                token: newToken,
+            },
         });
         return;
     } catch (e) {
@@ -117,7 +121,8 @@ const login = async (req: ILoginRequest, res: ILoginResponse) => {
 
     // Find matching user by email address
     try {
-        const userByEmail: IUserDocument | null = await UserDB.findOne({ email: req.body.email }, {
+        const userByEmail: Omit<IUserDocument, 'email'> | null = await UserDB.findOne({ email: req.body.email }, {
+            fullname: 1,
             password: 1,
             tokens: 1,
         });
@@ -174,7 +179,11 @@ with email: ${req.body.email} to user id: ${userByEmail.id}`
         res.status(200).send({
             success: true,
             message: 'Successfully authenticated',
-            data: { token: newToken },
+            data: {
+                fullname: userByEmail.fullname,
+                email: req.body.email,
+                token: newToken,
+            },
         });
         return;
     } catch (e) {
@@ -199,7 +208,7 @@ const autoLogin = async (req: IAutoLoginRequest, res: IAutoLoginResponse) => {
         readonly exp: number;
     }
 
-    let user: Readonly<Omit<mongoose.Document, 'id'>> | null;
+    let user: Pick<IUserDocument, 'fullname' | 'email'> | null;
     let userId: string;
 
     // Authorizing the user
@@ -207,7 +216,7 @@ const autoLogin = async (req: IAutoLoginRequest, res: IAutoLoginResponse) => {
         const token: string = (req.header('Authorization') as string).replace('Bearer ', '');
         const data: IVerify = jwt.verify(token, process.env.JWT_PWD) as IVerify;
 
-        user = await UserDB.findById(data.id, { id: 0 });
+        user = await UserDB.findById(data.id, { fullname: 1, email: 1 });
 
         if (!user) {
             ServerGlobal.getInstance().logger.error(
@@ -241,6 +250,10 @@ const autoLogin = async (req: IAutoLoginRequest, res: IAutoLoginResponse) => {
     res.status(200).send({
         success: true,
         message: 'Successful auto login',
+        data: {
+            fullname: user.fullname,
+            email: user.email,
+        }
     });
     return;
 }

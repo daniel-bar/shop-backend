@@ -6,4 +6,4 @@ interface IDBCollection {
     readonly updatedAt: Date;
 }
 
-export { IDBCollection };
+export { IDBCollection }

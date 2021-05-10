@@ -15,7 +15,7 @@ enum PaymentMonth {
     October,
     November,
     December,
-};
+}
 
 enum PaymentYear {
     Y_2021 = '2021',
@@ -23,7 +23,7 @@ enum PaymentYear {
     Y_2023 = '2023',
     Y_2024 = '2024',
     Y_2025 = '2025',
-};
+}
 
 interface IPayment extends IDBCollection {
     readonly owner: mongoose.Types.ObjectId;
@@ -78,7 +78,7 @@ const paymentSchema: mongoose.Schema = new mongoose.Schema({
         require: true,
     },
     expiryDateYear: {
-        type: Number,
+        type: String,
         enum: ['2021', '2022', '2023', '2024', '2025'],
         require: true,
     },

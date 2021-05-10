@@ -2,6 +2,6 @@ import express from 'express';
 
 import { FeedbackResponse } from '../../shared/response';
 
-type IHandleContantResponse = express.Response<FeedbackResponse>;
+type IContantResponse = express.Response<FeedbackResponse>;
 
-export { IHandleContantResponse }
+export { IContantResponse }

@@ -41,8 +41,6 @@ const bodyKeys = (fields: IBodyField[]) => {
         }
         next();
     };
-};
+}
 
-export {
-    bodyKeys,
-};
+export { bodyKeys }

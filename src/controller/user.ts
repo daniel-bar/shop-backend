@@ -8,12 +8,8 @@ import {
     UserDB,
 } from '../model/user';
 
-import {
-    IEditProfileRequest,
-} from '../model/express/request/user';
-import {
-    IEditProfileResponse,
-} from '../model/express/response/user';
+import { IEditProfileRequest } from '../model/express/request/user';
+import { IEditProfileResponse } from '../model/express/response/user';
 
 const editProfile = async (req: IEditProfileRequest, res: IEditProfileResponse) => {
     ServerGlobal.getInstance().logger.info(
@@ -36,7 +32,7 @@ const editProfile = async (req: IEditProfileRequest, res: IEditProfileResponse) 
         // Find the user
         const userByID: Pick<
             IUserDocument, keyof mongoose.Document | 'id' | 'email' | 'password'
-        > | null = await UserDB.findById(req.userId!, { password: 1 });
+        > | null = await UserDB.findById(req.userId, { password: 1 });
 
         if (!userByID) {
             ServerGlobal.getInstance().logger.error(

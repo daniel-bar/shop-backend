@@ -2,12 +2,16 @@ import express from 'express';
 
 import { ProductCategory } from '../../../server-global';
 
+import { ProductGender } from '../../product';
+
 interface IAddProductRequest extends express.Request {
     readonly body: Readonly<{
         category: ProductCategory;
+        gender: ProductGender;
         title: string;
         description: string;
         price: number;
+        image: string;
     }>;
 }
 
@@ -19,9 +23,14 @@ interface IGetProductRequest extends express.Request {
 
 interface IGetCategoriesRequest extends express.Request { }
 
+interface IDeleteProductRequest extends express.Request {
+    readonly params: Readonly<{ id: string; }>;
+}
+
 export {
     IAddProductRequest,
     IGetProductsRequest,
     IGetProductRequest,
     IGetCategoriesRequest,
-};
+    IDeleteProductRequest,
+}

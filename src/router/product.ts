@@ -5,6 +5,7 @@ import {
     getProducts,
     getProduct,
     getCategories,
+    deleteProduct,
 } from '../controller/product';
 
 import { bodyKeys } from '../middleware/security';
@@ -16,9 +17,12 @@ router.post(
     '/',
     adminAuth,
     bodyKeys([
+        { key: 'category', type: 'number' },
+        { key: 'gender', type: 'string' },
         { key: 'title', type: 'string' },
         { key: 'description', type: 'string' },
-        { key: 'price', type: 'number' }
+        { key: 'price', type: 'number' },
+        { key: 'image', type: 'string' },
     ]),
     addProduct,
 );
@@ -36,6 +40,11 @@ router.get(
 router.get(
     '/categories',
     getCategories,
+);
+
+router.delete(
+    '/:id',
+    deleteProduct,
 );
 
 export default router;

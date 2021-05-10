@@ -1,7 +1,14 @@
 import { IAuthenticatedRequest } from './auth';
 
-interface IContantRequest extends IAuthenticatedRequest {
-    readonly body: Readonly<{ message: string }>;
+enum Topic {
+    Delivery = 'delivery',
+    ReturnsAndRefunds = 'returns & refunds',
+    OrderIssues = 'oreder issues',
+    Technical = 'technical',
 }
 
-export { IContantRequest };
+interface IContantRequest extends IAuthenticatedRequest {
+    readonly body: Readonly<{ topic: Topic, message: string }>;
+}
+
+export { IContantRequest }

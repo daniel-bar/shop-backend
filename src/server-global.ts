@@ -9,7 +9,7 @@ export enum ProductCategory {
     TShirts,
     Sneakers,
     Hats,
-};
+}
 
 class ServerGlobal {
     private readonly _logger: winston.Logger;
@@ -74,7 +74,7 @@ class ServerGlobal {
 
     /**
     * Getter for the values of the product categories
-    * @returns product categories' values array
+    * @returns product categories values array
     */
     public get productCategoriesValues() {
         return this._productCategories.map((productCategory) => productCategory.value);

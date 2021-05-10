@@ -1,11 +1,12 @@
 import mongoose from 'mongoose';
 
-import ServerGlobal from '../server-global';
+import ServerGlobal, { ProductCategory } from '../server-global';
 
 import {
     IProduct,
     ProductDB,
     IProductDocument,
+    ProductGender,
 } from '../model/product';
 
 import {
@@ -13,12 +14,14 @@ import {
     IGetProductsRequest,
     IGetProductRequest,
     IGetCategoriesRequest,
+    IDeleteProductRequest,
 } from '../model/express/request/product';
 import {
     IAddProductResponse,
     IGetProductsResponse,
     IGetProductResponse,
     IGetCategoriesResponse,
+    IDeleteProductResponse,
 } from '../model/express/response/product';
 
 const addProduct = async (req: IAddProductRequest, res: IAddProductResponse) => {
@@ -46,9 +49,11 @@ const addProduct = async (req: IAddProductRequest, res: IAddProductResponse) => 
         // Creating the product
         const newProduct = new ProductDB({
             category: req.body.category,
+            gender: req.body.gender,
             title: req.body.title,
             description: req.body.description,
             price: req.body.price,
+            image: req.body.image,
         });
 
         // Saving the product in DB
@@ -80,31 +85,24 @@ const getProducts = async (req: IGetProductsRequest, res: IGetProductsResponse) 
     ServerGlobal.getInstance().logger.info('<getProducts>: Start processing request');
 
     try {
-        type product = Pick<IProduct, 'id' | 'category' | 'title' | 'description' | 'price'>;
+        const products = await ProductDB.find({
+            $and: [
+                { 'category': 0 },
+                { 'gender': ProductGender.Men },
+            ]
+        });
+        console.log(products)
 
-        const products: ReadonlyArray<product> = await ProductDB.aggregate<product>([
-            {
-                $sort: { createdAt: -1 },
-            },
-            {
-                $project: {
-                    category: 1,
-                    title: 1,
-                    description: 1,
-                    price: 1,
-                },
-            },
-        ]);
 
         ServerGlobal.getInstance().logger.info('<getProducts>: Successfully got the products');
 
         res.status(200).send({
             success: true,
             message: 'Successfully retrieved products',
-            data: products.map((product) => ({
-                ...product,
-                id: product.id.toHexString(),
-            })),
+            // data: products.map((product) => ({
+            //     ...product,
+            //     id: product.id.toHexString(),
+            // })),
         });
         return;
     } catch (e) {
@@ -125,12 +123,14 @@ const getProduct = async (req: IGetProductRequest, res: IGetProductResponse) => 
 
     try {
         const product: Pick<
-            IProductDocument, keyof mongoose.Document | 'category' | 'title' | 'description' | 'price'
+            IProductDocument, keyof mongoose.Document | 'category' | 'gender' | 'title' | 'description' | 'price' | 'image'
         > | null = await ProductDB.findById(req.params.id, {
             category: 1,
+            gender: 1,
             title: 1,
             description: 1,
-            price: 1
+            price: 1,
+            image: 1,
         });
 
         if (!product) {
@@ -152,9 +152,11 @@ const getProduct = async (req: IGetProductRequest, res: IGetProductResponse) => 
             message: 'Successfully retrieved product',
             data: {
                 category: ServerGlobal.getInstance().getCategoryLabel(product.category)!,
+                gender: product.gender,
                 title: product.title,
                 description: product.description,
                 price: product.price,
+                image: product.image,
             },
         });
         return;
@@ -194,9 +196,37 @@ const getCategories = async (req: IGetCategoriesRequest, res: IGetCategoriesResp
     }
 }
 
+const deleteProduct = async (req: IDeleteProductRequest, res: IDeleteProductResponse) => {
+    ServerGlobal.getInstance().logger.info('<deleteProduct>: Start processing request');
+
+    try {
+        const id = mongoose.Types.ObjectId(req.params.id);
+        await ProductDB.deleteOne({ id });
+
+        ServerGlobal.getInstance().logger.info(`<deleteProduct>: Successfully deleted product with ${req.params.id}`);
+
+        res.status(200).send({
+            success: true,
+            message: 'Successfully deleted product',
+        });
+        return;
+    } catch (e) {
+        ServerGlobal.getInstance().logger.error(
+            `<deleteProduct>: Failed to delete product with id: ${req.params.id}. because of server error: ${e}`
+        );
+
+        res.status(500).send({
+            success: false,
+            message: 'Server error',
+        });
+        return;
+    }
+}
+
 export {
     addProduct,
     getProducts,
     getProduct,
     getCategories,
+    deleteProduct,
 }

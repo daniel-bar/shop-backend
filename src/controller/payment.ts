@@ -4,7 +4,6 @@ import ServerGlobal from '../server-global';
 
 import {
     IPayment,
-    IPaymentDocument,
     PaymentDB,
 } from '../model/payment';
 

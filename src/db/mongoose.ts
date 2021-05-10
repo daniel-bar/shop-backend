@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 
 import ServerGlobal from '../server-global';
 
-mongoose.connect(process.env.DB_ENDPOINT as string, {
+mongoose.connect(process.env.DB_ENDPOINT, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useCreateIndex: true,

@@ -10,7 +10,10 @@ const router = express.Router();
 router.post(
     '/',
     auth,
-    bodyKeys([{ key: 'message', type: 'string' }]),
+    bodyKeys([
+        { key: 'topic', type: 'string' },
+        { key: 'message', type: 'string' },
+    ]),
     contact,
 );
 

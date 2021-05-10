@@ -32,7 +32,7 @@ router.post(
 );
 
 router.get(
-    '/auto-login',
+    '/',
     autoLogin,
 );
 

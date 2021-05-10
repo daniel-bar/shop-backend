@@ -1,11 +1,17 @@
 import nodemailer from 'nodemailer';
+import mongoose from 'mongoose';
+
+import {
+    IUserDocument,
+    UserDB,
+} from '../model/user';
 
 import ServerGlobal from '../server-global';
 
 import { IContantRequest } from '../model/express/request/contact';
-import { IHandleContantResponse } from '../model/express/response/contact';
+import { IContantResponse } from '../model/express/response/contact';
 
-const contact = async (req: IContantRequest, res: IHandleContantResponse) => {
+const contact = async (req: IContantRequest, res: IContantResponse) => {
     ServerGlobal.getInstance().logger.info(
         `<contant>: Start processing request with user id: ${req.userId!!}`
     );
@@ -22,7 +28,7 @@ becuase provided message is of invalid length`);
         });
         return;
     }
-
+    
     const transporter: nodemailer.Transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
@@ -32,10 +38,11 @@ becuase provided message is of invalid length`);
     });
 
     try {
+
         await transporter.sendMail({
-            from: 'mhfchelloworld@gmail.com',
-            to: "mhfchelloworld@gmail.com",
-            subject: "Welcome Email",
+            from:'mhfchelloworld@gmail.com',
+            to: 'mhfchelloworld@gmail.com',
+            subject: req.body.topic,
             text: req.body.message,
         });
 
@@ -49,6 +56,7 @@ becuase provided message is of invalid length`);
         });
         return;
     } catch (e) {
+        console.log(e)
         ServerGlobal.getInstance().logger.error(
             `<contant>: Failed to sent message with user id ${req.userId!!} because of server error: ${e}`
         );

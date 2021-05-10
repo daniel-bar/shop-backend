@@ -8,4 +8,4 @@ interface IEditProfileRequest extends IAuthenticatedRequest {
     }>;
 }
 
-export { IEditProfileRequest };
+export { IEditProfileRequest }
