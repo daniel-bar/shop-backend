@@ -15,6 +15,7 @@ import {
     IGetProductRequest,
     IGetCategoriesRequest,
     IDeleteProductRequest,
+    IGetProductsSumRequest,
 } from '../model/express/request/product';
 import {
     IAddProductResponse,
@@ -22,6 +23,7 @@ import {
     IGetProductResponse,
     IGetCategoriesResponse,
     IDeleteProductResponse,
+    IGetProductsSumResponse,
 } from '../model/express/response/product';
 
 const addProduct = async (req: IAddProductRequest, res: IAddProductResponse) => {
@@ -91,18 +93,16 @@ const getProducts = async (req: IGetProductsRequest, res: IGetProductsResponse) 
                 { 'gender': ProductGender.Men },
             ]
         });
-        console.log(products)
-
 
         ServerGlobal.getInstance().logger.info('<getProducts>: Successfully got the products');
 
         res.status(200).send({
             success: true,
             message: 'Successfully retrieved products',
-            // data: products.map((product) => ({
-            //     ...product,
-            //     id: product.id.toHexString(),
-            // })),
+            data: products.map((product) => ({
+                ...product,
+                id: product.id.toHexString(),
+            })),
         });
         return;
     } catch (e) {
@@ -223,10 +223,47 @@ const deleteProduct = async (req: IDeleteProductRequest, res: IDeleteProductResp
     }
 }
 
+const getProductsSum = async (req: IGetProductsSumRequest, res: IGetProductsSumResponse) => {
+    ServerGlobal.getInstance().logger.info('<getProductsSum>: Start processing request');
+
+    try {
+        const sum = await ProductDB.aggregate([
+            {
+                $group: {
+                    _id: null,
+                    sumTotal: {
+                        $sum: '$price'
+                    },
+                },
+            },
+        ]);
+
+        ServerGlobal.getInstance().logger.info('<getProductsSum>: Successfully got the products sum');
+
+        res.status(200).send({
+            success: true,
+            message: 'Successfully got the products sum',
+            data: { sum },
+        });
+        return;
+    } catch (e) {
+        ServerGlobal.getInstance().logger.error(
+            `<getProductsSum>: Failed to get the products sum because of server error: ${e}`
+        );
+
+        res.status(500).send({
+            success: false,
+            message: 'Server error',
+        });
+        return;
+    }
+}
+
 export {
     addProduct,
     getProducts,
     getProduct,
     getCategories,
     deleteProduct,
+    getProductsSum,
 }

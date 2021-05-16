@@ -43,10 +43,17 @@ type IGetCategoriesResponse = express.Response<
 
 type IDeleteProductResponse = express.Response<FeedbackResponse>;
 
+type IGetProductsSumResponse = express.Response<
+    FeedbackResponse & Readonly<Partial<{
+        data: Readonly<{ sum: object }>;
+    }>>
+>;
+
 export {
     IAddProductResponse,
     IGetProductsResponse,
     IGetProductResponse,
     IGetCategoriesResponse,
     IDeleteProductResponse,
+    IGetProductsSumResponse,
 }

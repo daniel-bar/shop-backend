@@ -6,6 +6,7 @@ import {
     getProduct,
     getCategories,
     deleteProduct,
+    getProductsSum,
 } from '../controller/product';
 
 import { bodyKeys } from '../middleware/security';
@@ -47,4 +48,8 @@ router.delete(
     deleteProduct,
 );
 
+router.get(
+    '/sum/d', // לא עבד לי בלי ה/ אחרי
+    getProductsSum,
+);
 export default router;

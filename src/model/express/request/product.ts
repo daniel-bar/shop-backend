@@ -27,10 +27,13 @@ interface IDeleteProductRequest extends express.Request {
     readonly params: Readonly<{ id: string; }>;
 }
 
+interface IGetProductsSumRequest extends express.Request { }
+
 export {
     IAddProductRequest,
     IGetProductsRequest,
     IGetProductRequest,
     IGetCategoriesRequest,
     IDeleteProductRequest,
+    IGetProductsSumRequest,
 }

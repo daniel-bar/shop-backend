@@ -41,7 +41,7 @@ const editProfile = async (req: IEditProfileRequest, res: IEditProfileResponse) 
 
             res.status(401).send({
                 success: false,
-                message: 'Could not find user'
+                message: 'Could not find user',
             });
             return;
         }
