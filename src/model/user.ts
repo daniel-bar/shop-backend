@@ -46,4 +46,4 @@ const UserDB = mongoose.model<IUserDocument, IUserModel>('User', userSchema);
 export {
     IUserDocument,
     UserDB,
-}
+};

@@ -1,14 +1,12 @@
 import express from 'express';
 
+import { bodyKeys } from '../middleware/security';
+
 import {
     register,
     login,
     autoLogin,
 } from '../controller/auth';
-
-import {
-    bodyKeys,
-} from '../middleware/security';
 
 const router = express.Router();
 

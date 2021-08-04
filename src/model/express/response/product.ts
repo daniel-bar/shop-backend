@@ -1,59 +1,66 @@
 import express from 'express';
 
-import { FeedbackResponse } from '../../shared/response';
+import {
+    ProductCategory,
+    ProductGender,
+} from '../../../server-global';
 
-import { ProductCategory } from '../../../server-global';
+import { IServerResponse } from '../../shared/response';
 
-import { ProductGender } from '../../product';
-
-type IAddProductResponse = express.Response<FeedbackResponse>;
+type IAddProductResponse = express.Response<IServerResponse>;
 
 type IGetProductsResponse = express.Response<
-    FeedbackResponse & Readonly<Partial<{
-        data: ReadonlyArray<Readonly<{
+    IServerResponse & {
+        data?: {
             id: string;
-            category: ProductCategory;
-            gender: ProductGender;
+            category: { value: ProductCategory, label: string };
+            gender: { value: ProductGender, label: string };
             title: string;
             description: string;
             price: number;
-            image: string;
-        }>>;
-    }>>
+            imageFilename: string;
+        }[];
+    }
 >;
 
 type IGetProductResponse = express.Response<
-    FeedbackResponse & Readonly<Partial<{
-        data: Readonly<{
-            category: string;
-            gender: string;
+    IServerResponse & {
+        data?: {
+            category: { value: ProductCategory, label: string };
+            gender: { value: ProductGender, label: string };
             title: string;
             description: string;
             price: number;
-            image: string;
-        }>;
-    }>>
+            imageFilename: string;
+        };
+    }
 >;
 
 type IGetCategoriesResponse = express.Response<
-    FeedbackResponse & Readonly<Partial<{
-        data: Readonly<{ categories: ReadonlyArray<Readonly<{ value: ProductCategory, label: string }>> }>;
-    }>>
+    IServerResponse & {
+        data?: {
+            value: ProductCategory,
+            label: string,
+        }[];
+    }
 >;
 
-type IDeleteProductResponse = express.Response<FeedbackResponse>;
-
-type IGetProductsSumResponse = express.Response<
-    FeedbackResponse & Readonly<Partial<{
-        data: Readonly<{ sum: object }>;
-    }>>
+type IGetGendersResponse = express.Response<
+    IServerResponse & {
+        data?: {
+            value: ProductGender,
+            label: string,
+        }[];
+    }
 >;
+
+type IDeleteProductResponse = express.Response<IServerResponse>;
 
 export {
     IAddProductResponse,
     IGetProductsResponse,
     IGetProductResponse,
     IGetCategoriesResponse,
+    IGetGendersResponse,
     IDeleteProductResponse,
-    IGetProductsSumResponse,
-}
+};

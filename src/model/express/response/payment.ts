@@ -1,25 +1,25 @@
 import express from 'express';
 
-import { FeedbackResponse } from '../../shared/response';
+import { IServerResponse } from '../../shared/response';
 
-type ISavePaymentResponse = express.Response<FeedbackResponse>;
+type ISavePaymentResponse = express.Response<IServerResponse>;
 
 type IGetPaymentsResponse = express.Response<
-    FeedbackResponse & Readonly<Partial<{
-        data: ReadonlyArray<Readonly<{
+    IServerResponse & {
+        data?: {
             id: string;
             paymentDigits: string;
-        }>>;
-    }>>
+        }[];
+    }
 >;
 
-type ICheckoutWithExistingPaymentResponse = express.Response<FeedbackResponse>;
+type ICheckoutWithExistingPaymentResponse = express.Response<IServerResponse>;
 
-type ICheckoutWithNewPaymentResponse = express.Response<FeedbackResponse>;
+type ICheckoutWithNewPaymentResponse = express.Response<IServerResponse>;
 
 export {
     ISavePaymentResponse,
     IGetPaymentsResponse,
     ICheckoutWithExistingPaymentResponse,
     ICheckoutWithNewPaymentResponse,
-}
+};

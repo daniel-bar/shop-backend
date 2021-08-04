@@ -1,14 +1,17 @@
 import { IAuthenticatedRequest } from './auth';
 
-enum Topic {
-    Delivery = 'delivery',
-    ReturnsAndRefunds = 'returns & refunds',
-    OrderIssues = 'oreder issues',
-    Technical = 'technical',
-}
+import { Topic } from '../../shared/topic';
 
 interface IContantRequest extends IAuthenticatedRequest {
-    readonly body: Readonly<{ topic: Topic, message: string }>;
+    readonly body: Readonly<{
+        topic: Topic,
+        message: string,
+    }>;
 }
 
-export { IContantRequest }
+interface IGetTopicsRequest extends IAuthenticatedRequest { }
+
+export {
+    IContantRequest,
+    IGetTopicsRequest,
+};

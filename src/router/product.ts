@@ -1,41 +1,30 @@
 import express from 'express';
+import multer from 'multer';
+
+import { adminAuth } from '../middleware/auth';
 
 import {
+    storage,
     addProduct,
     getProducts,
     getProduct,
     getCategories,
+    getGenders,
     deleteProduct,
-    getProductsSum,
 } from '../controller/product';
-
-import { bodyKeys } from '../middleware/security';
-import { adminAuth } from '../middleware/auth';
 
 const router = express.Router();
 
 router.post(
     '/',
     adminAuth,
-    bodyKeys([
-        { key: 'category', type: 'number' },
-        { key: 'gender', type: 'string' },
-        { key: 'title', type: 'string' },
-        { key: 'description', type: 'string' },
-        { key: 'price', type: 'number' },
-        { key: 'image', type: 'string' },
-    ]),
+    multer({ storage }).single('image'),
     addProduct,
 );
 
 router.get(
-    '/all',
+    '/:category/:gender',
     getProducts,
-);
-
-router.get(
-    '/:id',
-    getProduct,
 );
 
 router.get(
@@ -43,13 +32,19 @@ router.get(
     getCategories,
 );
 
+router.get(
+    '/genders',
+    getGenders,
+);
+
+router.get(
+    '/:id',
+    getProduct,
+);
+
 router.delete(
     '/:id',
     deleteProduct,
 );
 
-router.get(
-    '/sum/d', // לא עבד לי בלי ה/ אחרי
-    getProductsSum,
-);
 export default router;

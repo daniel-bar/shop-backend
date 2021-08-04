@@ -1,11 +1,11 @@
-import { IAuthenticatedRequest } from './auth';
+import { IAuthenticatedRequest } from "./auth";
 
 interface IEditProfileRequest extends IAuthenticatedRequest {
-    readonly body: Readonly<{
-        currentPassword: string;
-        newEmail: string;
-        newPassword: string;
-    }>;
+  readonly body: Readonly<{
+    password: string;
+    newEmail?: string;
+    newPassword?: string;
+  }>;
 }
 
-export { IEditProfileRequest }
+export { IEditProfileRequest };

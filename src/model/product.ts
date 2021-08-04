@@ -1,13 +1,11 @@
 import mongoose from 'mongoose';
 
-import ServerGlobal, { ProductCategory } from '../server-global';
+import ServerGlobal, {
+    ProductGender,
+    ProductCategory,
+} from '../server-global';
 
 import { IDBCollection } from './shared/db-collection';
-
-export enum ProductGender {
-    Men = 'Men',
-    Women = 'Women',
-}
 
 interface IProduct extends IDBCollection {
     readonly category: ProductCategory;
@@ -15,7 +13,7 @@ interface IProduct extends IDBCollection {
     readonly title: string;
     readonly description: string;
     readonly price: number;
-    readonly image: string;
+    readonly imageFilename: string;
 }
 
 interface IProductDocument extends Omit<IProduct, 'id'>, mongoose.Document { }
@@ -29,8 +27,8 @@ const productSchema: mongoose.Schema = new mongoose.Schema({
         required: true,
     },
     gender: {
-        type: String,
-        enum: ['Men', 'Women'],
+        type: Number,
+        enum: ServerGlobal.getInstance().productGendersValues,
         required: true,
     },
     title: {
@@ -49,10 +47,10 @@ const productSchema: mongoose.Schema = new mongoose.Schema({
         type: Number,
         required: true,
     },
-    image: {
+    imageFilename: {
         type: String,
         required: true,
-    }
+    },
 }, {
     timestamps: true,
 });
@@ -63,4 +61,4 @@ export {
     IProduct,
     IProductDocument,
     ProductDB,
-}
+};

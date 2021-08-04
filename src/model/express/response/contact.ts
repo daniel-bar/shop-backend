@@ -1,7 +1,21 @@
 import express from 'express';
 
-import { FeedbackResponse } from '../../shared/response';
+import { IServerResponse } from '../../shared/response';
 
-type IContantResponse = express.Response<FeedbackResponse>;
+import { Topic } from '../../shared/topic';
 
-export { IContantResponse }
+type IContantResponse = express.Response<IServerResponse>;
+
+type IGetTopicsResponse = express.Response<
+    IServerResponse & {
+        data?: {
+            value: Topic,
+            label: string,
+        }[];
+    }
+>;
+
+export {
+    IContantResponse,
+    IGetTopicsResponse,
+};

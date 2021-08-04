@@ -1,7 +1,7 @@
-import express from 'express';
+import express from "express";
 
-import { FeedbackResponse } from '../../shared/response';
+import { IServerResponse } from "../../shared/response";
 
-type IEditProfileResponse = express.Response<FeedbackResponse>;
+type IEditProfileResponse = express.Response<IServerResponse>;
 
-export { IEditProfileResponse }
+export { IEditProfileResponse };

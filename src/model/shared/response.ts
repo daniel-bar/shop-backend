@@ -1,6 +1,6 @@
-type FeedbackResponse = Readonly<{
+interface IServerResponse {
     success: boolean;
     message: string;
-}>;
+};
 
-export { FeedbackResponse }
+export { IServerResponse };

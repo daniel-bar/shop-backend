@@ -8,6 +8,7 @@ declare global {
             readonly DB_ENDPOINT: string;
             readonly JWT_PWD: string;
             readonly ADMIN_EMAIL: string;
+            readonly ADMIN_EMAIL_PASSWORD: string;
         }
     }
 }

@@ -1,21 +1,17 @@
-import express from 'express';
+import express from "express";
 
-import { editProfile } from '../controller/user';
+import { bodyKeys } from "../middleware/security";
+import { auth } from "../middleware/auth";
 
-import { bodyKeys } from '../middleware/security';
-import { auth } from '../middleware/auth';
+import { editProfile } from "../controller/user";
 
 const router = express.Router();
 
 router.patch(
-    '/',
-    auth,
-    bodyKeys([
-        { key: 'currentPassword', type: 'string' },
-        { key: 'newEmail', type: 'string' },
-        { key: 'newPassword', type: 'string' },
-    ]),
-    editProfile,
+  "/",
+  auth,
+  bodyKeys([{ key: "password", type: "string" }]),
+  editProfile
 );
 
 export default router;
