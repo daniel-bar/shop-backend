@@ -4,11 +4,11 @@ import mime from "mime-types";
 
 import ServerGlobal from "../server-global";
 
-import { ProductDB } from "../model/product";
+import { IProductDocument, ProductDB } from "../model/product";
 
 import {
   IAddProductRequest,
-  IGetProductsRequest,
+  IgetProductsRequest,
   IGetProductRequest,
   IGetCategoriesRequest,
   IGetGendersRequest,
@@ -16,7 +16,7 @@ import {
 } from "../model/express/request/product";
 import {
   IAddProductResponse,
-  IGetProductsResponse,
+  IgetProductsResponse,
   IGetProductResponse,
   IGetCategoriesResponse,
   IGetGendersResponse,
@@ -25,7 +25,7 @@ import {
 
 const storage = multer.diskStorage({
   destination(req, file, cb) {
-    cb(null, "./data/products/images");
+    cb(null, "./images");
   },
   filename(req, file, cb) {
     const ext = mime.extension(file.mimetype);
@@ -141,22 +141,116 @@ const addProduct = async (
   }
 };
 
+// const getProducts = async (
+//   req: IgetProductsRequest,
+//   res: IgetProductsResponse
+// ) => {
+//   ServerGlobal.getInstance().logger.info(
+//     `<getProducts>: Start processing request filtered by \
+// category ${req.params.category} and gender ${req.params.gender}`
+//   );
+
+//   if (!ServerGlobal.getInstance().isValidCategoryValue(+req.params.category!)) {
+//     ServerGlobal.getInstance().logger.error(
+//       `<getProducts>: Failed to get products because of invalid category filtered by category ${req.params.category} \
+// and gender ${req.params.gender}`
+//     );
+
+//     res.status(400).send({
+//       success: false,
+//       message: "Please provide valid category",
+//     });
+//     return;
+//   }
+
+//   if (
+//     !ServerGlobal.getInstance().isValidGenderValue(+req.params.gender!)
+//   ) {
+//     ServerGlobal.getInstance().logger.error(
+//       `<getProducts>: Failed to get products because of invalid gender filtered by category ${req.params.category} \
+//  and gender ${req.params.gender}`
+//     );
+
+//     res.status(400).send({
+//       success: false,
+//       message: "Please provide valid gender",
+//     });
+//     return;
+//   }
+
+//   try {
+//     const products = await ProductDB.find({
+//       category: +req.params.category!,
+//       gender: +req.params.gender!,
+//     });
+
+//     ServerGlobal.getInstance().logger.info(
+//       `<getProducts>: Successfully got the products filtered by \
+// category ${req.params.category} and gender ${req.params.gender}`
+//     );
+
+//     res.status(200).send({
+//       success: true,
+//       message: "Successfully retrieved products",
+//       data: products.map((product) => ({
+//         id: product.id as string,
+//         category: {
+//           value: product.category,
+//           label: ServerGlobal.getInstance().getCategoryLabel(product.category)!,
+//         },
+//         gender: {
+//           value: product.gender,
+//           label: ServerGlobal.getInstance().getGenderLabel(product.gender)!,
+//         },
+//         title: product.title,
+//         description: product.description,
+//         price: product.price,
+//         imageFilename: product.imageFilename,
+//       })),
+//     });
+//     return;
+//   } catch (e) {
+//     ServerGlobal.getInstance().logger.error(
+//       `<getProducts>: Failed to get products filtered by \
+// category ${req.params.category} and gender ${req.params.gender} because of server error: ${e}`
+//     );
+
+//     res.status(500).send({
+//       success: false,
+//       message: "Server error",
+//     });
+//     return;
+//   }
+// };
+
 const getProducts = async (
-  req: IGetProductsRequest,
-  res: IGetProductsResponse
+  req: IgetProductsRequest,
+  res: IgetProductsResponse
 ) => {
   ServerGlobal.getInstance().logger.info(
     `<getProducts>: Start processing request filtered by \
 category ${req.params.category} and gender ${req.params.gender}`
   );
 
-  if (
-    isNaN(+req.params.category) ||
-    !ServerGlobal.getInstance().isValidCategoryValue(+req.params.category)
-  ) {
+  if (!req.params.category && !req.params.gender) {
     ServerGlobal.getInstance().logger.error(
-      `<getProducts>: Failed to get products filtered by category ${req.params.category} \
- and gender ${req.params.gender}`
+      `<getProducts>: Failed to get products because of invalid category or gender filtered by category ${req.params.category} \
+and gender ${req.params.gender}`
+    );
+
+    res.status(400).send({
+      success: false,
+      message: "Please provide a category and/or gender",
+    });
+    return;    
+  }
+
+  const dbQueryParams: any = { };
+ 
+  if (req.params.category && !ServerGlobal.getInstance().isValidCategoryValue(+req.params.category!)) {
+    ServerGlobal.getInstance().logger.error(
+      `<getProducts>: Failed to get products because of invalid category filtered by category ${req.params.category} \
+and gender ${req.params.gender}`
     );
 
     res.status(400).send({
@@ -165,13 +259,15 @@ category ${req.params.category} and gender ${req.params.gender}`
     });
     return;
   }
+  else {
+    dbQueryParams.category = +req.params.category!
+  }
 
-  if (
-    isNaN(+req.params.gender) ||
-    !ServerGlobal.getInstance().isValidGenderValue(+req.params.gender)
+  if (req.params.gender &&
+    !ServerGlobal.getInstance().isValidGenderValue(+req.params.gender!)
   ) {
     ServerGlobal.getInstance().logger.error(
-      `<getProducts>: Failed to get products filtered by category ${req.params.category} \
+      `<getProducts>: Failed to get products because of invalid gender filtered by category ${req.params.category} \
  and gender ${req.params.gender}`
     );
 
@@ -181,12 +277,13 @@ category ${req.params.category} and gender ${req.params.gender}`
     });
     return;
   }
+  else {
+    dbQueryParams.gender = +req.params.gender!
+  }
 
-  try {
-    const products = await ProductDB.find({
-      category: +req.params.category,
-      gender: +req.params.gender,
-    });
+  try {    
+    console.log(dbQueryParams);
+    const products = await ProductDB.find(dbQueryParams);
 
     ServerGlobal.getInstance().logger.info(
       `<getProducts>: Successfully got the products filtered by \

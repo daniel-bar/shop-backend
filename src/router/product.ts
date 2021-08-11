@@ -1,50 +1,27 @@
-import express from 'express';
-import multer from 'multer';
+import express from "express";
+import multer from "multer";
 
-import { adminAuth } from '../middleware/auth';
+import { adminAuth } from "../middleware/auth";
 
 import {
-    storage,
-    addProduct,
-    getProducts,
-    getProduct,
-    getCategories,
-    getGenders,
-    deleteProduct,
-} from '../controller/product';
+  storage,
+  addProduct,
+  getProducts,
+  getProduct,
+  getCategories,
+  getGenders,
+} from "../controller/product";
 
 const router = express.Router();
 
-router.post(
-    '/',
-    adminAuth,
-    multer({ storage }).single('image'),
-    addProduct,
-);
+router.post("/", adminAuth, multer({ storage }).single("image"), addProduct);
 
-router.get(
-    '/:category/:gender',
-    getProducts,
-);
+router.get("/list/:gender/:category", getProducts);
 
-router.get(
-    '/categories',
-    getCategories,
-);
+router.get("/categories", getCategories);
 
-router.get(
-    '/genders',
-    getGenders,
-);
+router.get("/genders", getGenders);
 
-router.get(
-    '/:id',
-    getProduct,
-);
-
-router.delete(
-    '/:id',
-    deleteProduct,
-);
+router.get("/:id", getProduct);
 
 export default router;

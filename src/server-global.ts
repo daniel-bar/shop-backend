@@ -5,12 +5,17 @@ import winston from 'winston';
 import { Topic } from './model/shared/topic';
 
 export enum ProductCategory {
-    Jeans,
+    Jeans = 1,
     Jackets,
     Coats,
     TShirts,
     Sneakers,
     Hats,
+};
+
+export enum ProductGender {
+    Men = 1,
+    Women,
 };
 
 export enum PaymentMonth {
@@ -42,11 +47,6 @@ export enum PaymentSize {
     M,
     L,
     XL,
-};
-
-export enum ProductGender {
-    Men,
-    Women,
 };
 
 class ServerGlobal {

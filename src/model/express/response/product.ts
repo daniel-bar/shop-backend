@@ -9,7 +9,7 @@ import { IServerResponse } from '../../shared/response';
 
 type IAddProductResponse = express.Response<IServerResponse>;
 
-type IGetProductsResponse = express.Response<
+type IgetProductsResponse = express.Response<
     IServerResponse & {
         data?: {
             id: string;
@@ -58,7 +58,7 @@ type IDeleteProductResponse = express.Response<IServerResponse>;
 
 export {
     IAddProductResponse,
-    IGetProductsResponse,
+    IgetProductsResponse,
     IGetProductResponse,
     IGetCategoriesResponse,
     IGetGendersResponse,
