@@ -1,5 +1,7 @@
 import express from "express";
 
+import { IAuthenticatedRequest } from "./auth";
+
 interface IAddProductRequest extends express.Request {
   readonly body: Readonly<{
     category: string;
@@ -11,7 +13,7 @@ interface IAddProductRequest extends express.Request {
 }
 
 interface IgetProductsRequest extends express.Request {
-  readonly params: Readonly<{
+  readonly query: Readonly<{
     gender?: string;
     category?: string;
   }>;
@@ -36,4 +38,4 @@ export {
   IGetCategoriesRequest,
   IGetGendersRequest,
   IDeleteProductRequest,
-};
+}

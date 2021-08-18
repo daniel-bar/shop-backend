@@ -3,15 +3,20 @@ import mongoose from "mongoose";
 
 import ServerGlobal from "../server-global";
 
-import { IUserDocument, UserDB } from "../model/user";
+import { IUserDocument, UserDB, IUser } from "../model/user";
 
-import { IEditProfileRequest } from "../model/express/request/user";
-import { IEditProfileResponse } from "../model/express/response/user";
+import { 
+  IEditProfileRequest, 
+  IAddProductsToBagRequest,
+  IGetInBagProductsRequest,
+} from "../model/express/request/user";
+import { 
+  IEditProfileResponse,
+  IAddProductsToBagResponse,
+  IGetInBagProductsResponse,
+} from "../model/express/response/user";
 
-const editProfile = async (
-  req: IEditProfileRequest,
-  res: IEditProfileResponse
-) => {
+const editProfile = async (req: IEditProfileRequest, res: IEditProfileResponse) => {
   ServerGlobal.getInstance().logger.info(
     `<editProfile>: Start processing request with user id ${req.userId!}`
   );
@@ -102,4 +107,118 @@ provided password mismatches for user id ${req.userId!}`
   }
 };
 
-export { editProfile };
+const addProductsToBag = async (req: IAddProductsToBagRequest, res: IAddProductsToBagResponse) => {
+  ServerGlobal.getInstance().logger.info(
+    `<addProductsToBag>: Start processing request with user id ${req.userId!}`
+  );
+
+  // Check whether provided field is valid
+  if (!req.body.productsId) {
+    res.status(400).send({
+      success: false,
+      message: "Invalid field",
+    });
+    return;
+  }
+
+  try {
+    // Find the user
+    const userByID: Pick<
+      IUserDocument,
+      keyof mongoose.Document | 'id' | 'inBagProducts' 
+    > | null = await UserDB.findById(req.userId);
+
+    if (!userByID) {
+      ServerGlobal.getInstance().logger.error(
+        `<addProductsToBag>: Failed to get user details for user id ${req.userId!}`
+      );
+
+      res.status(401).send({
+        success: false,
+        message: "Could not find user",
+      });
+      return;
+    }
+
+    // Update user's product bag
+    userByID.inBagProducts === req.body.productsId;
+
+    await userByID.save();
+
+    ServerGlobal.getInstance().logger.info(
+      `<addProductsToBag>: Successfully added products to bag for user id ${req.userId}`
+    );
+
+    res.status(200).send({
+      success: true,
+      message: "Successfully added products to bag",
+    });
+    return;
+  } catch (e) {
+    ServerGlobal.getInstance().logger.error(
+      `<addProductsToBag>: Failed to add products to bag for user id ${req.userId} because of server error: ${e}`
+    );
+
+    res.status(500).send({
+      success: false,
+      message: "Server error",
+    });
+    return;
+  }
+};
+
+const getInBagProducts = async (req: IGetInBagProductsRequest, res: IGetInBagProductsResponse) => {
+  ServerGlobal.getInstance().logger.info(
+    `<getInBagProducts>: Start processing request for user id ${req.userId!}`
+  );
+
+  try {
+    type product = Pick<IUser, 'id' | 'inBagProducts'>;
+
+    const products: ReadonlyArray<product> = await UserDB.aggregate<product>(
+      [
+        {
+          $match: { owner: req.userId! },
+        },
+        {
+          $sort: { createdAt: -1 },
+        },
+        {
+          $project: { cardNumber: 1 },
+        },
+      ]
+    );
+
+    ServerGlobal.getInstance().logger.info(
+      `<getInBagProducts>: Successfully got the in bag products for user with id ${req.userId!}`
+    );
+
+    res.status(200).send({
+      success: true,
+      message: "Successfully retrieved products",
+      data: products.map((product) => ({
+        id: product.id,
+        inBagProducts: product.inBagProducts,
+      })),
+    });
+    return;
+  } catch (e) {
+    ServerGlobal.getInstance().logger.error(
+      `<getInBagProducts>: Failed to get the products for user id ${req.userId!} \
+because of server error: ${e}`
+    );
+
+    res.status(500).send({
+      success: false,
+      message: "Server error",
+    });
+    return;
+  }
+};
+
+
+export { 
+  editProfile,
+  addProductsToBag,
+  getInBagProducts,
+};

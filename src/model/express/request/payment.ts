@@ -2,7 +2,7 @@ import { IAuthenticatedRequest } from "./auth";
 
 import { PaymentMonth, PaymentYear, PaymentSize } from "../../../server-global";
 
-interface IGetPaymentsRequest extends IAuthenticatedRequest {}
+interface IGetPaymentsRequest extends IAuthenticatedRequest { }
 
 interface ISavePaymentRequest extends IAuthenticatedRequest {
   readonly body: Readonly<{

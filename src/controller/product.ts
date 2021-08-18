@@ -4,7 +4,7 @@ import mime from "mime-types";
 
 import ServerGlobal from "../server-global";
 
-import { IProductDocument, ProductDB } from "../model/product";
+import { ProductDB } from "../model/product";
 
 import {
   IAddProductRequest,
@@ -24,20 +24,17 @@ import {
 } from "../model/express/response/product";
 
 const storage = multer.diskStorage({
-  destination(req, file, cb) {
+  destination: (req, file, cb) => {
     cb(null, "./images");
   },
-  filename(req, file, cb) {
+  filename: (req, file, cb) => {
     const ext = mime.extension(file.mimetype);
     const random = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
     cb(null, `${Date.now()}-${random}.${ext}`);
   },
 });
 
-const addProduct = async (
-  req: IAddProductRequest,
-  res: IAddProductResponse
-) => {
+const addProduct = async (req: IAddProductRequest, res: IAddProductResponse) => {
   ServerGlobal.getInstance().logger.info(
     "<addProduct>: Start processing request"
   );
@@ -106,6 +103,8 @@ const addProduct = async (
       return;
     }
 
+    const url = req.protocol + "://" + req.get("host");
+    
     // Creating the product
     const newProduct = new ProductDB({
       category: +req.body.category,
@@ -113,7 +112,7 @@ const addProduct = async (
       title: req.body.title,
       description: req.body.description,
       price: +req.body.price,
-      imageFilename: req.file.filename,
+      imageFileName: url + '/images/' + req.file.filename,
     });
 
     // Saving the product in DB
@@ -141,153 +140,41 @@ const addProduct = async (
   }
 };
 
-// const getProducts = async (
-//   req: IgetProductsRequest,
-//   res: IgetProductsResponse
-// ) => {
-//   ServerGlobal.getInstance().logger.info(
-//     `<getProducts>: Start processing request filtered by \
-// category ${req.params.category} and gender ${req.params.gender}`
-//   );
-
-//   if (!ServerGlobal.getInstance().isValidCategoryValue(+req.params.category!)) {
-//     ServerGlobal.getInstance().logger.error(
-//       `<getProducts>: Failed to get products because of invalid category filtered by category ${req.params.category} \
-// and gender ${req.params.gender}`
-//     );
-
-//     res.status(400).send({
-//       success: false,
-//       message: "Please provide valid category",
-//     });
-//     return;
-//   }
-
-//   if (
-//     !ServerGlobal.getInstance().isValidGenderValue(+req.params.gender!)
-//   ) {
-//     ServerGlobal.getInstance().logger.error(
-//       `<getProducts>: Failed to get products because of invalid gender filtered by category ${req.params.category} \
-//  and gender ${req.params.gender}`
-//     );
-
-//     res.status(400).send({
-//       success: false,
-//       message: "Please provide valid gender",
-//     });
-//     return;
-//   }
-
-//   try {
-//     const products = await ProductDB.find({
-//       category: +req.params.category!,
-//       gender: +req.params.gender!,
-//     });
-
-//     ServerGlobal.getInstance().logger.info(
-//       `<getProducts>: Successfully got the products filtered by \
-// category ${req.params.category} and gender ${req.params.gender}`
-//     );
-
-//     res.status(200).send({
-//       success: true,
-//       message: "Successfully retrieved products",
-//       data: products.map((product) => ({
-//         id: product.id as string,
-//         category: {
-//           value: product.category,
-//           label: ServerGlobal.getInstance().getCategoryLabel(product.category)!,
-//         },
-//         gender: {
-//           value: product.gender,
-//           label: ServerGlobal.getInstance().getGenderLabel(product.gender)!,
-//         },
-//         title: product.title,
-//         description: product.description,
-//         price: product.price,
-//         imageFilename: product.imageFilename,
-//       })),
-//     });
-//     return;
-//   } catch (e) {
-//     ServerGlobal.getInstance().logger.error(
-//       `<getProducts>: Failed to get products filtered by \
-// category ${req.params.category} and gender ${req.params.gender} because of server error: ${e}`
-//     );
-
-//     res.status(500).send({
-//       success: false,
-//       message: "Server error",
-//     });
-//     return;
-//   }
-// };
-
-const getProducts = async (
-  req: IgetProductsRequest,
-  res: IgetProductsResponse
-) => {
+const getProducts = async (req: IgetProductsRequest, res: IgetProductsResponse) => {
   ServerGlobal.getInstance().logger.info(
     `<getProducts>: Start processing request filtered by \
-category ${req.params.category} and gender ${req.params.gender}`
+category ${req.query.category} and gender ${req.query.gender}`
   );
 
-  if (!req.params.category && !req.params.gender) {
+  if (!ServerGlobal.getInstance().isValidCategoryValue(+req.query.category!) && !ServerGlobal.getInstance().isValidGenderValue(+req.query.gender!)) {
     ServerGlobal.getInstance().logger.error(
-      `<getProducts>: Failed to get products because of invalid category or gender filtered by category ${req.params.category} \
-and gender ${req.params.gender}`
+      `<getProducts>: Failed to get products because of invalid gender and category filtered by category ${req.query.category} \
+and gender ${req.query.gender}`
     );
 
     res.status(400).send({
       success: false,
-      message: "Please provide a category and/or gender",
-    });
-    return;    
-  }
-
-  const dbQueryParams: any = { };
- 
-  if (req.params.category && !ServerGlobal.getInstance().isValidCategoryValue(+req.params.category!)) {
-    ServerGlobal.getInstance().logger.error(
-      `<getProducts>: Failed to get products because of invalid category filtered by category ${req.params.category} \
-and gender ${req.params.gender}`
-    );
-
-    res.status(400).send({
-      success: false,
-      message: "Please provide valid category",
+      message: "Please provide valid gender and category",
     });
     return;
   }
-  else {
-    dbQueryParams.category = +req.params.category!
-  }
 
-  if (req.params.gender &&
-    !ServerGlobal.getInstance().isValidGenderValue(+req.params.gender!)
-  ) {
-    ServerGlobal.getInstance().logger.error(
-      `<getProducts>: Failed to get products because of invalid gender filtered by category ${req.params.category} \
- and gender ${req.params.gender}`
-    );
+  try {
+    let queryObj: Object = {};
 
-    res.status(400).send({
-      success: false,
-      message: "Please provide valid gender",
-    });
-    return;
-  }
-  else {
-    dbQueryParams.gender = +req.params.gender!
-  }
+    if (isNaN(+req.query.category!)) {      
+      queryObj = { gender: +req.query.gender! };
+    }
 
-  try {    
-    console.log(dbQueryParams);
-    const products = await ProductDB.find(dbQueryParams);
+    if (isNaN(+req.query.gender!)) {  
+      queryObj = { category: +req.query.category! };
+    }
+
+    const products = await ProductDB.find(queryObj);
 
     ServerGlobal.getInstance().logger.info(
       `<getProducts>: Successfully got the products filtered by \
-category ${req.params.category} and gender ${req.params.gender}`
+category ${req.query.category} and gender ${req.query.gender}`
     );
 
     res.status(200).send({
@@ -306,14 +193,15 @@ category ${req.params.category} and gender ${req.params.gender}`
         title: product.title,
         description: product.description,
         price: product.price,
-        imageFilename: product.imageFilename,
+        imageFileName: product.imageFileName,
       })),
     });
     return;
   } catch (e) {
+    console.log(e)
     ServerGlobal.getInstance().logger.error(
       `<getProducts>: Failed to get products filtered by \
-category ${req.params.category} and gender ${req.params.gender} because of server error: ${e}`
+category ${req.query.category} and gender ${req.query.gender} because of server error: ${e}`
     );
 
     res.status(500).send({
@@ -324,10 +212,7 @@ category ${req.params.category} and gender ${req.params.gender} because of serve
   }
 };
 
-const getProduct = async (
-  req: IGetProductRequest,
-  res: IGetProductResponse
-) => {
+const getProduct = async (req: IGetProductRequest, res: IGetProductResponse) => {
   ServerGlobal.getInstance().logger.info(
     `<getProduct>: Start processing request with product Id ${req.params.id}`
   );
@@ -366,7 +251,7 @@ const getProduct = async (
         title: product.title,
         description: product.description,
         price: product.price,
-        imageFilename: product.imageFilename,
+        imageFileName: product.imageFileName,
       },
     });
     return;
@@ -383,10 +268,7 @@ const getProduct = async (
   }
 };
 
-const getCategories = async (
-  req: IGetCategoriesRequest,
-  res: IGetCategoriesResponse
-) => {
+const getCategories = async (req: IGetCategoriesRequest, res: IGetCategoriesResponse) => {
   ServerGlobal.getInstance().logger.info(
     "<getCategories>: Start processing request"
   );
@@ -403,10 +285,7 @@ const getCategories = async (
   return;
 };
 
-const getGenders = async (
-  req: IGetGendersRequest,
-  res: IGetGendersResponse
-) => {
+const getGenders = async (req: IGetGendersRequest, res: IGetGendersResponse) => {
   ServerGlobal.getInstance().logger.info(
     "<getGenders>: Start processing request"
   );
@@ -423,10 +302,7 @@ const getGenders = async (
   return;
 };
 
-const deleteProduct = async (
-  req: IDeleteProductRequest,
-  res: IDeleteProductResponse
-) => {
+const deleteProduct = async (req: IDeleteProductRequest, res: IDeleteProductResponse) => {
   ServerGlobal.getInstance().logger.info(
     `<deleteProduct>: Start processing request with product id ${req.params.id}`
   );

@@ -6,6 +6,7 @@ interface IUser extends IDBCollection {
     readonly fullname: string;
     email: string;
     password: string;
+    inBagProducts: string[];
     tokens: Readonly<{ _id?: mongoose.Types.ObjectId, token: string }>[];
 }
 
@@ -31,6 +32,9 @@ const userSchema: mongoose.Schema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    inBagProducts: {
+        type: [mongoose.SchemaTypes.ObjectId]
+    },
     tokens: {
         type: [{
             token: { type: String },
@@ -46,4 +50,5 @@ const UserDB = mongoose.model<IUserDocument, IUserModel>('User', userSchema);
 export {
     IUserDocument,
     UserDB,
+    IUser,
 };

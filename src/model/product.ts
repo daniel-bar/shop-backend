@@ -13,7 +13,7 @@ interface IProduct extends IDBCollection {
     readonly title: string;
     readonly description: string;
     readonly price: number;
-    readonly imageFilename: string;
+    readonly imageFileName: string;
 }
 
 interface IProductDocument extends Omit<IProduct, 'id'>, mongoose.Document { }
@@ -47,7 +47,7 @@ const productSchema: mongoose.Schema = new mongoose.Schema({
         type: Number,
         required: true,
     },
-    imageFilename: {
+    imageFileName: {
         type: String,
         required: true,
     },

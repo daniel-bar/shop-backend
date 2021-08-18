@@ -13,7 +13,7 @@ const app: express.Application = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use('/images', express.static(path.join('shop-backend/images')));
+app.use('/images', express.static(path.join(__dirname, '../../shop-backend/images')));
 
 app.use(
   (req: express.Request, res: express.Response, next: express.NextFunction) => {

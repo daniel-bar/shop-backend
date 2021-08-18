@@ -1,3 +1,5 @@
+import express from "express";
+
 import { IAuthenticatedRequest } from "./auth";
 
 interface IEditProfileRequest extends IAuthenticatedRequest {
@@ -8,4 +10,17 @@ interface IEditProfileRequest extends IAuthenticatedRequest {
   }>;
 }
 
-export { IEditProfileRequest };
+interface IAddProductsToBagRequest extends IAuthenticatedRequest {
+  readonly body: Readonly<{
+    productsId: string[];
+  }>;
+}
+
+
+interface IGetInBagProductsRequest extends IAuthenticatedRequest { }
+
+export { 
+  IEditProfileRequest,
+  IAddProductsToBagRequest,
+  IGetInBagProductsRequest,
+};

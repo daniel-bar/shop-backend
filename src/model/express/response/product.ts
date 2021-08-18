@@ -18,7 +18,7 @@ type IgetProductsResponse = express.Response<
             title: string;
             description: string;
             price: number;
-            imageFilename: string;
+            imageFileName: string;
         }[];
     }
 >;
@@ -31,7 +31,7 @@ type IGetProductResponse = express.Response<
             title: string;
             description: string;
             price: number;
-            imageFilename: string;
+            imageFileName: string;
         };
     }
 >;

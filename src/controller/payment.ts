@@ -17,10 +17,7 @@ import {
   ICheckoutWithNewPaymentResponse,
 } from "../model/express/response/payment";
 
-const getPayments = async (
-  req: IGetPaymentsRequest,
-  res: IGetPaymentsResponse
-) => {
+const getPayments = async (req: IGetPaymentsRequest, res: IGetPaymentsResponse) => {
   ServerGlobal.getInstance().logger.info(
     `<getPayments>: Start processing request for user id ${req.userId!}`
   );
@@ -69,10 +66,7 @@ because of server error: ${e}`
   }
 };
 
-const checkoutWithExistingPayment = async (
-  req: ICheckoutWithExistingPaymentRequest,
-  res: ICheckoutWithExistingPaymentResponse
-) => {
+const checkoutWithExistingPayment = async (req: ICheckoutWithExistingPaymentRequest, res: ICheckoutWithExistingPaymentResponse) => {
   ServerGlobal.getInstance().logger.info(
     `<checkout/existing>: Start processing request for user id: ${req.userId!}`
   );
@@ -123,10 +117,7 @@ because of server error: ${e}`
   }
 };
 
-const checkoutWithNewPayment = async (
-  req: ICheckoutWithNewPaymentRequest,
-  res: ICheckoutWithNewPaymentResponse
-) => {
+const checkoutWithNewPayment = async (req: ICheckoutWithNewPaymentRequest, res: ICheckoutWithNewPaymentResponse) => {
   ServerGlobal.getInstance().logger.info(
     `<checkout/new>: Start processing request with user id: ${req.userId!}`
   );
@@ -181,7 +172,6 @@ const checkoutWithNewPayment = async (
       );
     }
 
-    console.log(req.body);
     // Processing payment
     ServerGlobal.getInstance().logger.info(
       `<checkout/new>: Successfully checked out with id: ${req.userId!}. \
@@ -206,4 +196,8 @@ Client chose${savedPayment ? "" : " not"} to save the payment.`
   }
 };
 
-export { getPayments, checkoutWithExistingPayment, checkoutWithNewPayment };
+export { 
+  getPayments, 
+  checkoutWithExistingPayment, 
+  checkoutWithNewPayment,
+};
